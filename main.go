@@ -17,13 +17,15 @@ const (
  /_ __ __ _/  \\ ___ //_//  /_//_ __ __ _/__ _ // 
  Go File Generator
 	`
+	colorBlue  = "\033[34m"
+	colorReset = "\033[0m"
 )
 
 func main() {
-	fmt.Println(logo)
-	
+	fmt.Fprint(os.Stdout, colorBlue, logo, colorReset)
+
 	if err := cli.Execute(os.Args[1:]); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
-	}	
+	}
 }
