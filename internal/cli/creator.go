@@ -3,14 +3,15 @@ package cli
 import (
 	"context"
 	"flag"
-	"fmt"
+
+	"github.com/erik-sostenes/gofige/internal/services"
 )
 
 type (
 	// Creator contains methods to create data in a collection
 	Creator interface {
-		// Create create data
-		Create(context.Context)
+		// Create creates data
+		Create(context.Context, string) error
 	}
 	creator struct {
 		fs   *flag.FlagSet
@@ -18,6 +19,7 @@ type (
 	}
 )
 
+// NewCreator cretes the subcommands and assigns the data to the variables of the flag
 func NewCreator() *creator {
 	c := &creator{
 		fs: flag.NewFlagSet("insert", flag.ContinueOnError),
@@ -35,6 +37,15 @@ func (c *creator) Parse(args []string) error {
 }
 
 func (c *creator) Run() error {
-	fmt.Println("Creator", ", path: ", c.path)
-	return nil
+	return c.Create(context.TODO(), c.path)
+}
+
+func (c *creator) Create(ctx context.Context, path string) error {
+	s := services.Create {
+		File: services.File {
+			Path: path,
+		},
+	}
+
+	return s.Create()
 }
