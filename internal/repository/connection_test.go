@@ -2,27 +2,27 @@ package repository
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"strconv"
 	"testing"
 	"time"
-	"fmt"
 
 	"go.mongodb.org/mongo-driver/x/mongo/driver/topology"
 )
 
 const (
 	remoteUri = "mongodb+srv://%s:%s@cluster0.o3tc8ee.mongodb.net/?retryWrites=true&w=majority"
-	localUri = "mongodb://127.0.0.1:27017"  
+	localUri  = "mongodb://127.0.0.1:27017"
 )
 
-func TestNewMongoClient(t *testing.T) {
+func TestNewClientMongo_CorrectConnection(t *testing.T) {
 	timeout, _ := strconv.Atoi(os.Getenv("NoSQL_TIMEOUT"))
 
 	tsc := map[string]struct {
 		configuration MongoDB
-		// expected is the type of error to expect
-		expected topology.ConnectionError
+		// err expeted error
+		expetedErr error
 	}{
 		"Given a correct authentication configuration, a new mongo remote client will be created": {
 			configuration: MongoDB{
@@ -31,16 +31,7 @@ func TestNewMongoClient(t *testing.T) {
 				ConnectTimeout: time.Duration(timeout),
 			},
 		},
-		"Given incorrect authentication configuation, a new mongo remote client will not be created": {
-			configuration: MongoDB{
-				Uri:            fmt.Sprintf(remoteUri, os.Getenv("NoSQL_USER"), os.Getenv("NoSQL_PASSWORD")),
-				User:           "some_user",
-				Password:       "some_user",
-				DatabaseName:   os.Getenv("NoSQL_DATABASE"),
-				ConnectTimeout: time.Duration(timeout),
-			},
-		},
-	"Given a correct authentication configuation, a new mongo local client will be created": {
+		"Given a correct authentication configuation, a new mongo local client will be created": {
 			configuration: MongoDB{
 				Uri:            localUri,
 				DatabaseName:   "students",
@@ -50,12 +41,38 @@ func TestNewMongoClient(t *testing.T) {
 	}
 
 	for name, ts := range tsc {
+		ts := ts
 		t.Run(name, func(t *testing.T) {
-			_, err := NewMongoClient(ts.configuration)
+			_, err := NewClientMongo(ts.configuration)
 			if err != nil {
-				if !errors.As(err, &ts.expected) {
-					t.Fatalf("expected error %T, got %T error", ts.expected, err)
-				}
+				t.Fatalf("expected error %T, got %T error", ts.expetedErr, err)
+			}
+		})
+	}
+}
+
+func TestNewClientMongo_WrongConnection(t *testing.T) {
+	timeout, _ := strconv.Atoi(os.Getenv("NoSQL_TIMEOUT"))
+
+	tsc := map[string]struct {
+		configuration MongoDB
+		// err expeted error
+		expetedErr topology.ConnectionError
+	}{
+		"Given incorrect authentication configuation, a new mongo remote client will not be created": {
+			configuration: MongoDB{
+				Uri:            fmt.Sprintf(remoteUri, os.Getenv("NoSQL_USER"), os.Getenv("NoSQL_PASSWORD")),
+				DatabaseName:   os.Getenv("NoSQL_DATABASE"),
+				ConnectTimeout: time.Duration(timeout),
+			},
+		},
+	}
+
+	for name, ts := range tsc {
+		t.Run(name, func(t *testing.T) {
+			_, err := NewClientMongo(ts.configuration)
+			if !errors.As(err, &ts.expetedErr) {
+				t.Fatalf("expected error %T, got %T error", ts.expetedErr, err)
 			}
 		})
 	}
