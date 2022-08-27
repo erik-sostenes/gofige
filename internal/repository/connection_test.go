@@ -59,7 +59,7 @@ func TestNewClientMongo_WrongConnection(t *testing.T) {
 		// err expeted error
 		expetedErr topology.ConnectionError
 	}{
-	"Given incorrect authentication configuation, a new mongo remote client will not be created": {
+		"Given incorrect authentication configuation, a new mongo remote client will not be created": {
 			configuration: MongoDB{
 				Uri:            fmt.Sprintf(remoteUri, os.Getenv("NoSQL_USER"), os.Getenv("NoSQL_PASSWORD")),
 				DatabaseName:   os.Getenv("NoSQL_DATABASE"),
