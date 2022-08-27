@@ -11,13 +11,15 @@ import (
 )
 
 var (
-	syncMongo   sync.Once
+	syncMongo     sync.Once
 	mongoDatabase *mongo.Database
-	mongoClient *mongo.Client
-	err error
+	mongoClient   *mongo.Client
+	err           error
 )
 
-func NewMongoClient(config MongoDB) (*mongo.Database, error) {
+// NewClientMongo creates a new connection to mongoClient
+// use syncOnce to create only one instance of mongoClient
+func NewClientMongo(config MongoDB) (*mongo.Database, error) {
 	syncMongo.Do(func() {
 		ctx, cancel := context.WithTimeout(context.Background(), config.ConnectTimeout*time.Second)
 		defer cancel()
@@ -33,7 +35,7 @@ func NewMongoClient(config MongoDB) (*mongo.Database, error) {
 }
 
 func NewMDB(config MongoDB) (mongoDB *mongo.Database) {
-	mongoDB, err := NewMongoClient(config)
+	mongoDB, err := NewClientMongo(config)
 	if err != nil {
 		panic(err)
 	}
