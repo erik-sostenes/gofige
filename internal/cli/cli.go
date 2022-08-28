@@ -31,9 +31,9 @@ func Execute(args []string) error {
 	studentStorer := repository.NewStudentStorer(mongoDB)
 	studentService := services.NewStudentService(studentStorer)
 
-	cmds := []Runner {
+	cmds := []Runner{
 		NewCreator(studentService),
-		NewFinder(),
+		NewFinder(studentService),
 		NewUpdater(),
 		NewDeleter(),
 	}

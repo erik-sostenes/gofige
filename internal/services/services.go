@@ -11,28 +11,33 @@ import (
 	"github.com/erik-sostenes/gofige/internal/repository"
 )
 
-
 type (
 	// StudentService contains the methods that are responsible for verifying that the business logic is correct
 	StudentService interface {
-		Create(string) error
+		Create(context.Context, string) error
+		// Find find all data and returns a .csv file
+		Find(context.Context) (model.Students, error)
+		// FindByFlags find any collection that matches the flags
+		// returns a .csv file
+		FindByFlags(context.Context, model.Student) (model.Students, error)
 	}
 	// studentService implements StudentService interface
 	studentService struct {
-		fileService 
-		studentStorer repository.StudentStorer	
+		fileService
+		studentStorer repository.StudentStorer
 	}
 )
 
 // NewStudentService returns a instance of StudentStorer interface
 func NewStudentService(studentStorer repository.StudentStorer) StudentService {
-	return &studentService {
+	return &studentService{
 		studentStorer: studentStorer,
 	}
 }
+
 // Create creates an slice of students
-func (s *studentService) Create(path string) (err error) {
-	data, err := s.Read(path)	
+func (s *studentService) Create(ctx context.Context, path string) (err error) {
+	data, err := s.Read(path)
 	if err != nil {
 		err = fmt.Errorf("an error occurred while reading the file, check the directory %s", path)
 		return
@@ -59,6 +64,13 @@ func (s *studentService) Create(path string) (err error) {
 		}
 		students = append(students, student)
 	}
-	err = s.studentStorer.Insert(context.TODO(), students[1:])
+	err = s.studentStorer.Insert(ctx, students[1:])
 	return
+}
+
+func (s *studentService) Find(ctx context.Context) (model.Students, error) {
+	return nil, nil
+}
+func (s *studentService) FindByFlags(ctx context.Context, studentFlags model.Student) (model.Students, error) {
+	return nil, nil
 }
