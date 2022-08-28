@@ -10,7 +10,7 @@ import (
 type (
 	// Creator contains methods to create data in a collection
 	Creator interface {
-		// Create creates data
+		// Create creates data by reading a csv file
 		Create(context.Context, string) error
 	}
 	creator struct {
