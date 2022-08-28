@@ -15,14 +15,16 @@ type (
 	}
 	creator struct {
 		fs   *flag.FlagSet
+		studentService services.StudentService
 		path string
 	}
 )
 
 // NewCreator cretes the subcommands and assigns the data to the variables of the flag
-func NewCreator() *creator {
+func NewCreator(studentService services.StudentService) *creator {
 	c := &creator{
 		fs: flag.NewFlagSet("insert", flag.ContinueOnError),
+		studentService: studentService,
 	}
 	c.fs.StringVar(&c.path, "path", "", "address of the file from which the data is to be extracted")
 	return c
@@ -41,11 +43,5 @@ func (c *creator) Run() error {
 }
 
 func (c *creator) Create(ctx context.Context, path string) error {
-	s := services.Create {
-		File: services.File {
-			Path: path,
-		},
-	}
-
-	return s.Create()
+	return c.studentService.Create(path)
 }

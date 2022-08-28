@@ -4,6 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"os"
+
+	"github.com/erik-sostenes/gofige/internal/repository"
+	"github.com/erik-sostenes/gofige/internal/services"
 )
 
 // Runner will define all subcommands and will initialize
@@ -24,8 +27,12 @@ func Execute(args []string) error {
 		return errors.New("You must pass a sub-command")
 	}
 
-	cmds := []Runner{
-		NewCreator(),
+	mongoDB := repository.NewMDB(repository.Config).Collection("students")
+	studentStorer := repository.NewStudentStorer(mongoDB)
+	studentService := services.NewStudentService(studentStorer)
+
+	cmds := []Runner {
+		NewCreator(studentService),
 		NewFinder(),
 		NewUpdater(),
 		NewDeleter(),
