@@ -21,24 +21,22 @@ type (
 		fs             *flag.FlagSet
 		studentService services.StudentService
 		path           string
-		all            bool
-		studentFlags   model.Student
+		flags          model.Student
 	}
 )
 
-func NewFinder(studentService services.StudentService) *finder {
+func NewFinder(studentService services.StudentService) Runner {
 	f := &finder{
 		fs:             flag.NewFlagSet("find", flag.ContinueOnError),
 		studentService: studentService,
 	}
-	f.fs.BoolVar(&f.all, "all", false, "find all the documents of the collection")
 
-	f.fs.StringVar(&f.path, "path", "./", "addres when you want to save the .csv file with the data.")
-	f.fs.StringVar(&f.studentFlags.Tuition, "tuition", "nil", "find the collection that matches with tuition")
-	f.fs.StringVar(&f.studentFlags.Name, "name", "nil", "find the collection that matches with name")
-	f.fs.StringVar(&f.studentFlags.Carrer, "carreer", "nil", "find the collection that matches with carreer")
-	f.fs.StringVar(&f.studentFlags.Grade, "grade", "nil", "find the collection that matches with grade")
-	f.fs.StringVar(&f.studentFlags.Group, "group", "nil", "find the collection that matches with group")
+	f.fs.StringVar(&f.path, "path", "", "addres when you want to save the .csv file with the data.")
+	f.fs.StringVar(&f.flags.Tuition, "tuition", "nil", "find the collection that matches with tuition")
+	f.fs.StringVar(&f.flags.Name, "name", "nil", "find the collection that matches with name")
+	f.fs.StringVar(&f.flags.Carrer, "carreer", "nil", "find the collection that matches with carreer")
+	f.fs.StringVar(&f.flags.Grade, "grade", "nil", "find the collection that matches with grade")
+	f.fs.StringVar(&f.flags.Group, "group", "nil", "find the collection that matches with group")
 	return f
 }
 
@@ -51,18 +49,11 @@ func (f *finder) Parse(args []string) error {
 }
 
 func (f *finder) Run() (err error) {
-	if f.all {
-		_, err = f.Find(context.TODO())
-		return
-	}
-	_, err = f.FindByFlags(context.TODO(), f.studentFlags)
+	_, err = f.Find(context.TODO(), f.path, f.flags)
 	return
 }
 
-func (f *finder) Find(ctx context.Context) (model.Students, error) {
-	return f.studentService.Find(ctx)
-}
-
-func (f *finder) FindByFlags(ctx context.Context, studentFlags model.Student) (model.Students, error) {
-	return f.studentService.FindByFlags(ctx, studentFlags)
+func (f *finder) Find(ctx context.Context, path string, flags model.Student) (students model.Students, err error) {
+	students, err = f.studentService.Find(ctx, path, flags)
+	return
 }
