@@ -16,7 +16,7 @@ type MongoDB struct {
 var (
 	timeout, _ = strconv.Atoi(os.Getenv("NoSQL_TIMEOUT"))
 	// Config settings to a mongodb connection
-	Config = MongoDB {
+	Config = MongoDB{
 		Uri:            "mongodb://127.0.0.1:27017",
 		DatabaseName:   "students",
 		ConnectTimeout: time.Duration(timeout),
