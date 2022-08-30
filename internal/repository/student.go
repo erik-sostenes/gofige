@@ -8,14 +8,14 @@ import (
 )
 
 type (
-	// StudentStorer interface containing the methods to insert documents into mongodb
+	// StudentStorer interface containing methods for working with documents in mongodb
 	StudentStorer interface {
-		// Insert method that inserts one document a mongodb
+		// Insert method that inserts one document with collections to mongodb
 		Insert(context.Context, model.Students) error
 	}
 	// studentStorer studentStorer will connect and work with the mongo client
 	studentStorer struct {
-		*mongo.Collection
+		db *mongo.Collection
 	}
 )
 
@@ -26,12 +26,33 @@ func NewStudentStorer(db *mongo.Collection) StudentStorer {
 	}
 }
 
+// Insert inserts ine document with collections of students
 func (s *studentStorer) Insert(ctx context.Context, students model.Students) (err error) {
 	var docs []interface{}
 
 	for _, v := range students {
 		docs = append(docs, v)
 	}
-	_, err = s.InsertMany(ctx, docs)
+	_, err = s.db.InsertMany(ctx, docs)
 	return
+}
+
+// _ "implement" constraint for *MockStudentStorer
+var _ StudentStorer = (*MockStudentStorer)(nil)
+
+//MockStudentStorer store od model.Students
+type MockStudentStorer struct {
+	MockStudents model.Students
+	Error        error
+}
+
+// Insert save a model.Students
+func (m *MockStudentStorer) Insert(ctx context.Context, students model.Students) (err error) {
+	m.MockStudents = append(m.MockStudents, students...)
+	return m.Error
+}
+
+// Find search a model.Students by flags
+func (m *MockStudentStorer) Find(context.Context, map[string]string) (model.Students, error) {
+	return m.MockStudents, m.Error
 }
