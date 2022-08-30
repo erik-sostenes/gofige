@@ -3,7 +3,6 @@ package services
 import (
 	"context"
 	"encoding/csv"
-	"encoding/json"
 	"fmt"
 	"io"
 	"strings"
@@ -23,13 +22,16 @@ type (
 	// studentService implements StudentService interface
 	studentService struct {
 		fileService
+		flags
 		studentStorer repository.StudentStorer
 	}
 )
 
 // NewStudentService returns a instance of StudentStorer interface
 func NewStudentService(studentStorer repository.StudentStorer) StudentService {
+	f := make(flags)
 	return &studentService{
+		flags:         f,
 		studentStorer: studentStorer,
 	}
 }
@@ -66,7 +68,7 @@ func (s *studentService) Create(ctx context.Context, path string) (err error) {
 }
 
 func (s *studentService) Find(ctx context.Context, path string, flags model.Student) (students model.Students, err error) {
-	m, err := createFlags(flags)
+	m, err := s.flags.UnmarshalFlags(flags)
 	if err != nil {
 		return
 	}
@@ -93,26 +95,9 @@ func (s *studentService) Find(ctx context.Context, path string, flags model.Stud
 			v.Group,
 			v.Carrer,
 		}
-		fmt.Println(row)
 		if err = csvWriter.Write(row); err != nil {
 			err = fmt.Errorf("error writing record to file %s", err)
 		}
 	}
 	return
-}
-
-func createFlags(flags interface{}) (map[string]string, error) {
-	bytes, err := json.Marshal(flags)
-	m := make(map[string]string)
-
-	err = json.Unmarshal(bytes, &m)
-	if err != nil {
-		return m, err
-	}
-	for k, v := range m {
-		if v == "nil" {
-			delete(m, k)
-		}
-	}
-	return m, err
 }

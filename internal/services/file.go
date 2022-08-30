@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+
+	"github.com/erik-sostenes/gofige/internal/model"
 )
 
 // file contains methods for working with files
@@ -30,7 +32,9 @@ func (f *fileService) Write(path string) (csvFile *os.File, err error) {
 func (f *fileService) checkFilePath(path string) (err error) {
 	info, err := os.Stat(path)
 	if os.IsNotExist(err) || info.IsDir() {
-		err = fmt.Errorf("an error occurred while reading the file, check the directory %s", path)
+		err = model.WrongFile(
+			fmt.Sprintf("an error occurred while reading the file, check the directory %s", path),
+		)
 		return
 	}
 	return
