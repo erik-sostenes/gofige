@@ -10,6 +10,7 @@ import (
 type flags map[string]string
 
 // UnmarshalFlags returns a new map with the flgas required
+// example [name:erik, group:nil, tuition: XFB649J] -> [name:erik, tuition: XFB649J] 
 func (f *flags) UnmarshalFlags(flags model.Student) (flags, error) {
 	bytes, err := json.Marshal(flags)
 
