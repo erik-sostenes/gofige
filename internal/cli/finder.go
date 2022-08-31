@@ -34,7 +34,7 @@ func NewFinder(studentService services.StudentService) Runner {
 	f.fs.StringVar(&f.path, "path", "", "addres when you want to save the .csv file with the data.")
 	f.fs.StringVar(&f.flags.Tuition, "tuition", "nil", "find the collection that matches with tuition")
 	f.fs.StringVar(&f.flags.Name, "name", "nil", "find the collection that matches with name")
-	f.fs.StringVar(&f.flags.Carrer, "carreer", "nil", "find the collection that matches with carreer")
+	f.fs.StringVar(&f.flags.Career, "carreer", "nil", "find the collection that matches with carreer")
 	f.fs.StringVar(&f.flags.Grade, "grade", "nil", "find the collection that matches with grade")
 	f.fs.StringVar(&f.flags.Group, "group", "nil", "find the collection that matches with group")
 	return f

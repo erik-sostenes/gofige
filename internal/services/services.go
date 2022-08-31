@@ -22,16 +22,13 @@ type (
 	// studentService implements StudentService interface
 	studentService struct {
 		fileService
-		flags
 		studentStorer repository.StudentStorer
 	}
 )
 
 // NewStudentService returns a instance of StudentStorer interface
 func NewStudentService(studentStorer repository.StudentStorer) StudentService {
-	f := make(flags)
 	return &studentService{
-		flags:         f,
 		studentStorer: studentStorer,
 	}
 }
@@ -59,7 +56,7 @@ func (s *studentService) Create(ctx context.Context, path string) (err error) {
 			Tuition: record[1],
 			Grade:   record[2],
 			Group:   record[3],
-			Carrer:  record[4],
+			Career:  record[4],
 		}
 		students = append(students, student)
 	}
@@ -68,7 +65,7 @@ func (s *studentService) Create(ctx context.Context, path string) (err error) {
 }
 
 func (s *studentService) Find(ctx context.Context, path string, flags model.Student) (students model.Students, err error) {
-	m, err := s.flags.UnmarshalFlags(flags)
+	m, err := unmarshalFlags(flags)
 	if err != nil {
 		return
 	}
@@ -93,7 +90,7 @@ func (s *studentService) Find(ctx context.Context, path string, flags model.Stud
 			v.Name,
 			v.Grade,
 			v.Group,
-			v.Carrer,
+			v.Career,
 		}
 		if err = csvWriter.Write(row); err != nil {
 			err = fmt.Errorf("error writing record to file %s", err)
