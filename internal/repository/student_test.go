@@ -53,6 +53,9 @@ func TestStudentStorer_Insert(t *testing.T) {
 	for name, ts := range tsc {
 		t.Run(name, func(t *testing.T) {
 			err := ts.studentStorer.Insert(context.TODO(), ts.mockStudents)
+			t.Cleanup(func() {
+				_ = ts.studentStorer.Delete(context.TODO(), bson.M{})
+			})
 			if err != ts.expectedError {
 				t.Errorf("expected error %s, got error %s", ts.expectedError, err)
 			}
@@ -239,9 +242,7 @@ func TestStudentStorer_Update(t *testing.T) {
 					{"career", mockStudentOne.Career},
 				},
 			}},
-			expetedStudents: model.Students{
-				mockStudentOne,
-			},
+			expetedStudents: model.Students{mockStudentOne},
 		},
 	}
 
@@ -259,9 +260,7 @@ func TestStudentStorer_Update(t *testing.T) {
 				t.SkipNow()
 			}
 
-			mock, _ := ts.studentStorer.Find(context.TODO(), bson.M{
-				"tuition": ts.expetedStudents[0].Tuition,
-			})
+			mock, _ := ts.studentStorer.Find(context.TODO(), bson.M{})
 
 			if !reflect.DeepEqual(ts.expetedStudents, mock) {
 				t.Errorf("expeted %v,\n got %v", ts.expetedStudents, mock)

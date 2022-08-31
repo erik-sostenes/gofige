@@ -3,12 +3,11 @@ package repository
 import (
 	"errors"
 	"fmt"
+	"go.mongodb.org/mongo-driver/x/mongo/driver/topology"
 	"os"
 	"strconv"
 	"testing"
 	"time"
-
-	"go.mongodb.org/mongo-driver/x/mongo/driver/topology"
 )
 
 const (
