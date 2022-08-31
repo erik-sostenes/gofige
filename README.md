@@ -24,7 +24,7 @@ Command line interface (CLI) for working with files and performing CRUD operatio
         <td>NoSQL_USER</td>
         <td>Setting Mongodb database URL</td>
         <td>NO</td>
-        <td>mongodb://127.0.0.1:27017/</td>
+        <td>mongodb://127.0.0.1:27017</td>
     </tr>
      <tr>
         <td>NoSQL_USER</td>
