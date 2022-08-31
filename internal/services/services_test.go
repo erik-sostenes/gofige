@@ -19,14 +19,14 @@ func TestStudentService_Find(t *testing.T) {
 			Name:    "Erik Sostenes",
 			Grade:   "5",
 			Group:   "A",
-			Carrer:  "Ingenieria",
+			Career:  "Ingenieria",
 		}
 		mockStudentTwo = model.Student{
 			Tuition: "EVS765",
 			Name:    "Erik Simon",
 			Grade:   "7",
 			Group:   "B",
-			Carrer:  "Sistemas",
+			Career:  "Sistemas",
 		}
 		mockStudents = model.Students{
 			mockStudentOne,

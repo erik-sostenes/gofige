@@ -14,9 +14,11 @@ type (
 		// Insert method that inserts one document with collections to mongodb
 		Insert(context.Context, model.Students) error
 		// Find method that find one document with collections to mongodb
-		Find(context.Context, map[string]string) (model.Students, error)
+		Find(context.Context, bson.M) (model.Students, error)
 		// Delete
-		Delete(context.Context, map[string]string) error
+		Delete(context.Context, bson.M) error
+		// Update
+		Update(context.Context, bson.M, bson.D) error
 	}
 	// studentStorer studentStorer will connect and work with the mongo client
 	studentStorer struct {
@@ -44,7 +46,7 @@ func (s *studentStorer) Insert(ctx context.Context, students model.Students) (er
 
 // Find gets a document depending on the filter conditions
 // the filter will be through the flags
-func (s *studentStorer) Find(ctx context.Context, flags map[string]string) (students model.Students, err error) {
+func (s *studentStorer) Find(ctx context.Context, flags bson.M) (students model.Students, err error) {
 	cur, err := s.db.Find(ctx, flags)
 	if err != nil {
 		return
@@ -68,8 +70,13 @@ func (s *studentStorer) Find(ctx context.Context, flags map[string]string) (stud
 	return
 }
 
-func (s *studentStorer) Delete(ctx context.Context, _ map[string]string) (err error) {
-	_, err = s.db.DeleteMany(ctx, bson.M{})
+func (s *studentStorer) Delete(ctx context.Context, m bson.M) (err error) {
+	_, err = s.db.DeleteMany(ctx, m)
+	return
+}
+
+func (s *studentStorer) Update(ctx context.Context, filter bson.M, arguments bson.D) (err error) {
+	_, err = s.db.UpdateOne(ctx, filter, arguments)
 	return
 }
 
@@ -89,11 +96,16 @@ func (m *MockStudentStorer) Insert(ctx context.Context, students model.Students)
 }
 
 // Find search a model.Students by arguments
-func (m *MockStudentStorer) Find(context.Context, map[string]string) (model.Students, error) {
+func (m *MockStudentStorer) Find(context.Context, bson.M) (model.Students, error) {
 	return m.MockStudents, m.Error
 }
 
-// Delete delete a model.Students by arguments
-func (m *MockStudentStorer) Delete(context.Context, map[string]string) (err error) {
+// Delete deletes a model.Students by arguments
+func (m *MockStudentStorer) Delete(context.Context, bson.M) (err error) {
+	return
+}
+
+// Update updates a model.Students by arguments
+func (s *MockStudentStorer) Update(context.Context, bson.M, bson.D) (err error) {
 	return
 }

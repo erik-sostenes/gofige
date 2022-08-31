@@ -7,7 +7,7 @@ type (
 		Tuition string `json:"tuition" bson:"tuition"`
 		Grade   string `json:"grade" bson:"grade"`
 		Group   string `json:"group" bson:"group"`
-		Carrer  string `json:"carreer" bson:"carreer"`
+		Career  string `json:"carreer" bson:"career"`
 	}
 	// Students slice of students
 	Students []Student
