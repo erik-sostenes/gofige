@@ -46,8 +46,8 @@ func (s *studentStorer) Insert(ctx context.Context, students model.Students) (er
 
 // Find gets a document depending on the filter conditions
 // the filter will be through the flags
-func (s *studentStorer) Find(ctx context.Context, flags bson.M) (students model.Students, err error) {
-	cur, err := s.db.Find(ctx, flags)
+func (s *studentStorer) Find(ctx context.Context, filter bson.M) (students model.Students, err error) {
+	cur, err := s.db.Find(ctx, filter)
 	if err != nil {
 		return
 	}
@@ -70,8 +70,8 @@ func (s *studentStorer) Find(ctx context.Context, flags bson.M) (students model.
 	return
 }
 
-func (s *studentStorer) Delete(ctx context.Context, m bson.M) (err error) {
-	_, err = s.db.DeleteMany(ctx, m)
+func (s *studentStorer) Delete(ctx context.Context, filter bson.M) (err error) {
+	_, err = s.db.DeleteMany(ctx, filter)
 	return
 }
 
